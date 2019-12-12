@@ -7,8 +7,8 @@ type Buildpack struct {
 }
 
 type Build struct {
-	Include []string `toml:"include"`
-	Exclude []string `toml:"exclude"`
+	Include    []string    `toml:"include"`
+	Exclude    []string    `toml:"exclude"`
 	Buildpacks []Buildpack `toml:"buildpacks"`
 }
 
