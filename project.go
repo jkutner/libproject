@@ -2,9 +2,10 @@ package libproject
 
 import (
 	"fmt"
-	"github.com/BurntSushi/toml"
 	"io/ioutil"
 	"os"
+
+	"github.com/BurntSushi/toml"
 )
 
 type Buildpack struct {

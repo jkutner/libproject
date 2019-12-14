@@ -1,11 +1,12 @@
 package libproject
 
 import (
-	"github.com/BurntSushi/toml"
 	"io/ioutil"
 	"log"
 	"os"
 	"testing"
+
+	"github.com/BurntSushi/toml"
 )
 
 func TestDecodeSimple(t *testing.T) {
