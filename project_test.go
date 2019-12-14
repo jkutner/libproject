@@ -2,6 +2,9 @@ package libproject
 
 import (
 	"github.com/BurntSushi/toml"
+	"io/ioutil"
+	"log"
+	"os"
 	"testing"
 )
 
@@ -48,6 +51,50 @@ uri = "https://example.com/buildpack"
 
 	expected = "https://example.com/buildpack"
 	if val.Build.Buildpacks[1].Uri != expected {
+		t.Fatalf("Expected\n-----\n%#v\n-----\nbut got\n-----\n%#v\n",
+			expected, val.Project.Name)
+	}
+}
+
+func TestFileDoesNotExist(t *testing.T) {
+	_, err := ReadProjectDescriptor("/path/that/does/not/exist/project.toml")
+
+	if !os.IsNotExist(err) {
+		t.Fatalf("Expected\n-----\n%#v\n-----\nbut got\n-----\n%#v\n",
+			"project.toml does not exist error", "no error")
+	}
+}
+
+func TestReadFile(t *testing.T) {
+	tmpFile, err := ioutil.TempFile(os.TempDir(), "project-")
+	if err != nil {
+		log.Fatal("Cannot create temporary file", err)
+	}
+
+	defer os.Remove(tmpFile.Name())
+
+	var text = `
+[project]
+name = "gallant"
+`
+
+	if _, err = tmpFile.Write([]byte(text)); err != nil {
+		log.Fatal("Failed to write to temporary file", err)
+	}
+
+	// Close the file
+	if err := tmpFile.Close(); err != nil {
+		log.Fatal(err)
+	}
+
+	val, err := ReadProjectDescriptor(tmpFile.Name())
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var expected = "gallant"
+	if val.Project.Name != expected {
 		t.Fatalf("Expected\n-----\n%#v\n-----\nbut got\n-----\n%#v\n",
 			expected, val.Project.Name)
 	}
