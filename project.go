@@ -41,7 +41,6 @@ func ReadProjectDescriptor(pathToFile string) (ProjectDescriptor, error) {
 		return ProjectDescriptor{}, err
 	} else {
 		projectTomlContents, err := ioutil.ReadFile(pathToFile)
-		// can file be opened?
 		if err != nil {
 			fmt.Print(err)
 		}
@@ -52,6 +51,11 @@ func ReadProjectDescriptor(pathToFile string) (ProjectDescriptor, error) {
 			return ProjectDescriptor{}, err
 		}
 
-		return descriptor, nil
+		return descriptor, descriptor.validate()
 	}
+}
+
+func (p ProjectDescriptor) validate() error {
+	// TODO
+	return nil
 }
