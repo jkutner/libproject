@@ -23,6 +23,10 @@ version = "1.0"
 
 [[build.buildpacks]]
 uri = "https://example.com/buildpack"
+
+[[build.env]]
+name = "JAVA_OPTS"
+value = "-Xmx300m"
 `
 	var val ProjectDescriptor
 	_, err := toml.Decode(testSimple, &val)
@@ -41,19 +45,31 @@ uri = "https://example.com/buildpack"
 	expected = "example/lua"
 	if val.Build.Buildpacks[0].Id != expected {
 		t.Fatalf("Expected\n-----\n%#v\n-----\nbut got\n-----\n%#v\n",
-			expected, val.Project.Name)
+			expected, val.Build.Buildpacks[0].Id)
 	}
 
 	expected = "1.0"
 	if val.Build.Buildpacks[0].Version != expected {
 		t.Fatalf("Expected\n-----\n%#v\n-----\nbut got\n-----\n%#v\n",
-			expected, val.Project.Name)
+			expected, val.Build.Buildpacks[0].Version)
 	}
 
 	expected = "https://example.com/buildpack"
 	if val.Build.Buildpacks[1].Uri != expected {
 		t.Fatalf("Expected\n-----\n%#v\n-----\nbut got\n-----\n%#v\n",
-			expected, val.Project.Name)
+			expected, val.Build.Buildpacks[1].Uri)
+	}
+
+	expected = "JAVA_OPTS"
+	if val.Build.Env[0].Name != expected {
+		t.Fatalf("Expected\n-----\n%#v\n-----\nbut got\n-----\n%#v\n",
+			expected, val.Build.Env[0].Name)
+	}
+
+	expected = "-Xmx300m"
+	if val.Build.Env[0].Value != expected {
+		t.Fatalf("Expected\n-----\n%#v\n-----\nbut got\n-----\n%#v\n",
+			expected, val.Build.Env[0].Value)
 	}
 }
 
@@ -98,5 +114,28 @@ name = "gallant"
 	if val.Project.Name != expected {
 		t.Fatalf("Expected\n-----\n%#v\n-----\nbut got\n-----\n%#v\n",
 			expected, val.Project.Name)
+	}
+}
+
+func TestEmtpyEnv(t *testing.T) {
+	var testSimple = `
+[project]
+name = "gallant"
+`
+	var val ProjectDescriptor
+	_, err := toml.Decode(testSimple, &val)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := 0
+	if len(val.Build.Env) != 0 {
+		t.Fatalf("Expected\n-----\n%#v\n-----\nbut got\n-----\n%#v\n",
+			expected, string(len(val.Build.Env)))
+	}
+
+	for _, envVar := range val.Build.Env {
+		t.Fatalf("Expected\n-----\n%#v\n-----\nbut got\n-----\n%#v\n",
+			"[]", envVar)
 	}
 }

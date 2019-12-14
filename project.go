@@ -14,10 +14,16 @@ type Buildpack struct {
 	Uri     string `toml:"uri"`
 }
 
+type EnvVar struct {
+	Name  string `toml:"name"`
+	Value string `toml:"value"`
+}
+
 type Build struct {
 	Include    []string    `toml:"include"`
 	Exclude    []string    `toml:"exclude"`
 	Buildpacks []Buildpack `toml:"buildpacks"`
+	Env        []EnvVar    `toml:"env"`
 }
 
 type Project struct {
